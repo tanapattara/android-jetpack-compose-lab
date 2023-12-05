@@ -13,6 +13,16 @@
         android:theme="@style/Theme.Lab01composeableandlayouts"
         tools:targetApi="31">
         <activity
+            android:name=".PersonDetailActivity"
+            android:exported="false"
+            android:label="@string/title_activity_person_detail"
+            android:theme="@style/Theme.Lab01composeableandlayouts" />
+        <activity
+            android:name=".PersonalDetailActivity"
+            android:exported="false"
+            android:label="@string/title_activity_personal_detail"
+            android:theme="@style/Theme.Lab01composeableandlayouts" />
+        <activity
             android:name=".ListActivity"
             android:exported="false"
             android:label="@string/title_activity_list"

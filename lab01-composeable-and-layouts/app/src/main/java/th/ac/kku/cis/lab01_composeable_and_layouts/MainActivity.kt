@@ -161,10 +161,3 @@ fun PersonListItem(data:Person, onClick: (msg: String) -> Unit){
             Text(data.studentId)
         }}
 }
-@Composable
-fun PersonDetail(navController: NavHostController = rememberNavController(), userID: String?){
-    var displayText: String = "Hello world"
-    if(userID != null)
-        displayText = userID
-    Text(text = displayText)
-}
