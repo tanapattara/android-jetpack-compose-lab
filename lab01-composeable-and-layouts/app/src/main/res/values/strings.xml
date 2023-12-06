@@ -46,4 +46,6 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
     <string name="title_activity_person_detail">PersonDetailActivity</string>
+    <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_activity_secound">SecoundActivity</string>
 </resources>

@@ -1,5 +1,6 @@
 package th.ac.kku.cis.lab01_composeable_and_layouts
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,7 +19,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,13 +37,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import th.ac.kku.cis.lab01_composeable_and_layouts.composes.PersonDetail
 import th.ac.kku.cis.lab01_composeable_and_layouts.ui.theme.Lab01composeableandlayoutsTheme
 
 data class Person (val name:String, val imageId:Int, val studentId:String)
@@ -94,6 +98,7 @@ fun PersonApp(
     if(currentScreen.contains("/"))
         currentScreen = currentScreen.split("/")[0]
 
+    val context = LocalContext.current
     Scaffold(
         topBar ={
             MyAppBar(
@@ -101,18 +106,24 @@ fun PersonApp(
                 canNavigateBack = navController.previousBackStackEntry != null,
                 navigateUp = { navController.navigateUp() }
             )
-        }
+        },
+        floatingActionButton = {
+            Button(onClick = {context.startActivity(Intent(context, SecoundActivity::class.java))}) {
+                Text(text = "Open SecoundActivity")
+            }
+        },
+        floatingActionButtonPosition = FabPosition.End
     ) { paddingValues ->
-
         NavHost(
             navController = navController,
             startDestination = "List",
             modifier = Modifier.padding(paddingValues)
         ){
             composable(route = "List"){
-                PersonsList(onItemClick = { userId ->
-                    navController.navigate(route = "Detail/$userId")
-                })
+                PersonsList(
+                    onItemClick = { userId ->
+                        navController.navigate(route = "Detail/$userId")},
+                    navigateUp = { navController.navigateUp()})
             }
             composable(route = "Detail/{userId}"){
                     backStackEntry -> PersonDetail(navController, userID = backStackEntry.arguments?.getString("userId"))
@@ -121,7 +132,7 @@ fun PersonApp(
     }
 }
 @Composable
-fun PersonsList(onItemClick: (String) -> Unit,){
+fun PersonsList(onItemClick: (String) -> Unit, navigateUp:() -> Unit){
     val persons: List<Person> = listOf<Person>(
         Person("Mickey Mouse", R.drawable.avatar, "001"),
         Person("Minnie Mouse", R.drawable.avatar, "001"),
@@ -129,13 +140,17 @@ fun PersonsList(onItemClick: (String) -> Unit,){
     )
     val context = LocalContext.current
 
-    LazyColumn(
-              modifier = Modifier.fillMaxSize()
-          ){
-                items(persons){
-                    persons -> PersonListItem(data = persons, onClick = onItemClick)
-                }
-          }
+    Column {
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(persons) { persons ->
+                PersonListItem(data = persons, onClick = onItemClick)
+            }
+        }
+
+    }
 }
 @Composable
 fun PersonListItem(data:Person, onClick: (msg: String) -> Unit){
@@ -160,4 +175,10 @@ fun PersonListItem(data:Person, onClick: (msg: String) -> Unit){
             Text(data.name)
             Text(data.studentId)
         }}
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    PersonApp()
 }

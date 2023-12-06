@@ -1,4 +1,4 @@
-package th.ac.kku.cis.lab01_composeable_and_layouts
+package th.ac.kku.cis.lab01_composeable_and_layouts.composes
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
