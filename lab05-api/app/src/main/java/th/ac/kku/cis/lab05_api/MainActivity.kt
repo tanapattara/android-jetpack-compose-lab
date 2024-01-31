@@ -2,23 +2,16 @@ package th.ac.kku.cis.lab05_api
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
@@ -32,12 +25,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import th.ac.kku.cis.lab05_api.ui.theme.Lab05apiTheme
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -49,6 +40,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import th.ac.kku.cis.lab05_api.model.Pokemon
+import th.ac.kku.cis.lab05_api.viewmodel.PokemonDetailViewModel
+import th.ac.kku.cis.lab05_api.viewmodel.PokemonViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,7 +120,7 @@ fun PokekonList(
     val pokemonList by pokemonViewModel.pokemonList.observeAsState(initial = emptyList())
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 128.dp),
-        modifier = Modifier.padding(horizontal = 4.dp),
+        modifier = Modifier.padding(horizontal = 12.dp, vertical = 0.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ){
@@ -140,7 +134,7 @@ fun PokekonList(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PokemonItem(
-    pokemon:Pokemon,
+    pokemon: Pokemon,
     onClick:(id:String) -> Unit
 ){
     var context = LocalContext.current
@@ -179,6 +173,7 @@ fun PokemonItem(
 @Composable
 fun PokemonDetail(
     pokemonId:String?,
+    pokemonDetailViewModel: PokemonDetailViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ){
     Text(text = "PokemonDetailPage")

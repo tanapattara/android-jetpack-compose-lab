@@ -1,4 +1,4 @@
-package th.ac.kku.cis.lab05_api
+package th.ac.kku.cis.lab05_api.model
 
 data class PokemonList(
     val count: Int,
