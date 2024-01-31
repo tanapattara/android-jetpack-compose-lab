@@ -19,9 +19,13 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -39,6 +43,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 
 class MainActivity : ComponentActivity() {
@@ -55,9 +64,15 @@ class MainActivity : ComponentActivity() {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PokemonApp(pokemonViewModel: PokemonViewModel = viewModel()) {
+fun PokemonApp(navController: NavHostController = rememberNavController()) {
 
-    val pokemonList by pokemonViewModel.pokemonList.observeAsState(initial = emptyList())
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    var currentScreen = backStackEntry?.destination?.route ?: "List"
+    if(currentScreen.contains("/"))
+        currentScreen = currentScreen.split("/")[0]
+
+    val context = LocalContext.current
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -68,38 +83,78 @@ fun PokemonApp(pokemonViewModel: PokemonViewModel = viewModel()) {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
+                navigationIcon = {
+                    if (navController.previousBackStackEntry != null) {
+                        IconButton(onClick = {navController.navigateUp()}) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = "Back Navigation"
+                            )
+                        }
+                    }
+                }
             )
         }
     ){
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 128.dp),
-            modifier = Modifier.padding(it),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ){
-            items(pokemonList){
-                item: Pokemon ->  PokemonItem(item, onClick = {})
+        paddingValues ->
+            NavHost(
+                navController = navController,
+                startDestination = "List",
+                modifier = Modifier.padding(paddingValues)
+            ){
+                composable(route = "List"){
+                    PokekonList(
+                        onItemClick = {
+                                      pokemonId -> navController.navigate(route = "Detail/" + pokemonId)
+                        },
+                        navigateUp = { navController.navigateUp()})
+                }
+                composable(route = "Detail/{pokemonId}"){
+                        backStackEntry -> PokemonDetail(
+                    navController = navController,
+                    pokemonId = backStackEntry.arguments?.getString("pokemonId"))
+                }
             }
-
+    }
+}
+@Composable
+fun PokekonList(
+    navigateUp:() -> Unit,
+    onItemClick: (String) -> Unit,
+    pokemonViewModel: PokemonViewModel = viewModel()
+){
+    val pokemonList by pokemonViewModel.pokemonList.observeAsState(initial = emptyList())
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = 128.dp),
+        modifier = Modifier.padding(horizontal = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ){
+        items(pokemonList){
+                item: Pokemon ->
+            PokemonItem(item, onClick = onItemClick)
         }
+
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PokemonItem(
     pokemon:Pokemon,
-    onClick:() -> Unit
+    onClick:(id:String) -> Unit
 ){
     var context = LocalContext.current
     var imageUrl:String = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"
-    var pokemonId:List<String> = pokemon.url.split('/')
-    var pokemonImage:String = imageUrl + pokemonId[pokemonId.size - 2] + ".png"
+    var urlSplited:List<String> = pokemon.url.split('/')
+    var pokemonId = urlSplited[urlSplited.size - 2]
+    var pokemonImage:String = imageUrl + pokemonId + ".png"
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
         ),
         onClick = {
-                  Toast.makeText(context, pokemon.name, Toast.LENGTH_SHORT).show()
+                  //Toast.makeText(context, pokemon.name, Toast.LENGTH_SHORT).show()
+            onClick(pokemonId)
         },
         modifier = Modifier
             .size(width = 100.dp, height = 100.dp)
@@ -107,7 +162,9 @@ fun PokemonItem(
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(14.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(14.dp)
+                .fillMaxWidth(),
         ) {
             AsyncImage(
                 model = pokemonImage,
@@ -119,6 +176,13 @@ fun PokemonItem(
 
 }
 
+@Composable
+fun PokemonDetail(
+    pokemonId:String?,
+    navController: NavHostController = rememberNavController()
+){
+    Text(text = "PokemonDetailPage")
+}
 @Preview(showBackground = true)
 @Composable
 fun AppPreview() {
