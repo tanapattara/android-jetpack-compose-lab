@@ -2,6 +2,8 @@ package th.ac.kku.cis.lab05_api
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +37,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 
@@ -75,14 +78,19 @@ fun PokemonApp(pokemonViewModel: PokemonViewModel = viewModel()) {
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ){
             items(pokemonList){
-                item: Pokemon ->  PokemonItem(item)
+                item: Pokemon ->  PokemonItem(item, onClick = {})
             }
 
         }
     }
 }
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PokemonItem(pokemon:Pokemon){
+fun PokemonItem(
+    pokemon:Pokemon,
+    onClick:() -> Unit
+){
+    var context = LocalContext.current
     var imageUrl:String = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"
     var pokemonId:List<String> = pokemon.url.split('/')
     var pokemonImage:String = imageUrl + pokemonId[pokemonId.size - 2] + ".png"
@@ -90,6 +98,9 @@ fun PokemonItem(pokemon:Pokemon){
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
         ),
+        onClick = {
+                  Toast.makeText(context, pokemon.name, Toast.LENGTH_SHORT).show()
+        },
         modifier = Modifier
             .size(width = 100.dp, height = 100.dp)
     ) {
