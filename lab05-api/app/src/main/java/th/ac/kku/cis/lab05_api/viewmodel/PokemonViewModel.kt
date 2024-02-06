@@ -1,4 +1,4 @@
-package th.ac.kku.cis.lab05_api
+package th.ac.kku.cis.lab05_api.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -9,6 +9,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import th.ac.kku.cis.lab05_api.api.PokemonApi
+import th.ac.kku.cis.lab05_api.model.Pokemon
+import th.ac.kku.cis.lab05_api.model.PokemonList
 
 class PokemonViewModel : ViewModel() {
     private val _data: MutableLiveData<List<Pokemon>> = MutableLiveData()
