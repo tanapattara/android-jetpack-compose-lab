@@ -8,6 +8,6 @@ data class PokemonList(
 )
 
 data class Pokemon(
-    val name: String,
+    var name: String,
     val url: String
 )
