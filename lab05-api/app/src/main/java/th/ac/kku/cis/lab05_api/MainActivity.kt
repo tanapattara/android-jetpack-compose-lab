@@ -183,6 +183,6 @@ fun PokemonDetail(
 fun AppPreview() {
     Lab05apiTheme {
         val pokemon = Pokemon("bulbasaur", "bulbasaur")
-        PokemonItem(pokemon)
+        PokemonItem(pokemon, onClick = {})
     }
 }

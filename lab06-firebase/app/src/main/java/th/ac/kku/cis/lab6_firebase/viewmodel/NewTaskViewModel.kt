@@ -17,7 +17,7 @@ class NewTaskViewModel() : ViewModel(){
         //get all data from firebase
 
     }
-    fun onSave(context: Context, title: String, onCompleate: () -> Boolean) {
+    fun onSave(context: Context, title: String, onCompleate:() -> Unit) {
         val db = FirebaseFirestore.getInstance()
         val dbCollection: CollectionReference = db.collection("Task")
         val taskData = TaskData(
